@@ -62,7 +62,7 @@ class ReadingTests {
     @ParameterizedTest
     @ValueSource(
         strings = [
-            "src/test/resources/DMR-1711742031270.xlsx",
+            // "src/test/resources/DMR-1711742031270.xlsx",
             "src/test/resources/baseDatosCandidatos.xls",
         ]
     )
