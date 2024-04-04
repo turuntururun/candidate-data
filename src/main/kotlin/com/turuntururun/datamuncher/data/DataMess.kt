@@ -1,5 +1,6 @@
 package com.turuntururun.datamuncher.data
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -9,13 +10,14 @@ import org.springframework.data.jpa.repository.Query
 data class CandidateDTO(
     @Id
     @GeneratedValue
+    @JsonIgnore
     var id: Int? = null,
     var party: String?,
+    @JsonIgnore
     var position: String?,
     var state: String?,
     var district: String?,
-    var circ: String?, // todo rename
-    var munic: String?, // todo rename
+    var constituency: Int?,
     var ticketNumber: Int?,
     var name: String?,
     var type: String?,
@@ -41,8 +43,7 @@ data class CandidateDTO(
         position = map["CARGO"]?.trim(),
         state = map["ENTIDAD"]?.trim(),
         district = map["DISTRITO FEDERAL"]?.trim(),
-        circ = map["CIRCUNSCRIPCION"]?.trim(),
-        munic = map["MUNICIPIO"]?.trim(),
+        constituency = map["CIRCUNSCRIPCION"]?.toIntOrNull(),
         ticketNumber = map["NUM_LISTA_O_FORMULA"]?.toDoubleOrNull()?.toInt(),
         name = map["NOMBRE_CANDIDATO"]?.trim(),
         type = map["TIPO_CANDIDATO"]?.trim(),
@@ -67,15 +68,28 @@ data class CandidateDTO(
     constructor() : this(emptyMap())
 }
 
+@Entity
+@Table
+data class StateConstituency(
+    @Id
+    var state: String = "",
+    var constituency: Int? = null,
+)
+
+interface StateConstituencyRepo : JpaRepository<StateConstituency, String>
 interface CandidateRepo : JpaRepository<CandidateDTO, String> {
 
     @Query("""
-        SELECT C FROM CandidateDTO C WHERE C.position = 'PRESIDENCIA DE LA REPÚBLICA' UNION
-        SELECT C FROM CandidateDTO C WHERE C.position = 'SENADURÍA FEDERAL MR' AND C.state = :state UNION 
-        SELECT C FROM CandidateDTO C WHERE C.position = 'DIPUTACIÓN FEDERAL MR' AND C.state = :state AND C.district = :district
+        SELECT C FROM CandidateDTO C WHERE 
+            (C.position = 'PRESIDENCIA DE LA REPÚBLICA') OR
+            (C.position = 'SENADURÍA FEDERAL MR' AND C.state = :state) OR 
+            (C.position = 'DIPUTACIÓN FEDERAL MR' AND C.state = :state AND C.district = :district)
+        ORDER BY C.party, C.type
         """)
     fun findAllElectableByStateAndDistrict(state: String?, district: String?): List<CandidateDTO>
 
+    @Query("select distinct C.state, C.district from CandidateDTO C")
+    fun listPlaces(): List<Array<String>>
 
 
 }

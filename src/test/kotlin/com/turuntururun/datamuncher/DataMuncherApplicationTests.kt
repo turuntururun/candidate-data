@@ -2,6 +2,8 @@ package com.turuntururun.datamuncher
 
 import com.turuntururun.datamuncher.data.CandidateDTO
 import com.turuntururun.datamuncher.data.CandidateRepo
+import com.turuntururun.datamuncher.data.StateConstituency
+import com.turuntururun.datamuncher.data.StateConstituencyRepo
 import io.restassured.RestAssured.given
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.web.server.LocalServerPort
+import java.net.URL
 
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -17,24 +20,14 @@ class DataMuncherApplicationTests {
 
 
     @Autowired
-    lateinit var repo: CandidateRepo
-
-    @Test
-    fun saveData() {
-        repo.deleteAll()
-
-        readXlsx("src/test/resources/baseDatosCandidatos.xls")
-            .map { CandidateDTO(it) }
-            .forEach { repo.save(it) }
-
-        println("Count: ${repo.count()}")
-    }
+    lateinit var candidateRepo: CandidateRepo
+    lateinit var stateConstituencyRepo: StateConstituencyRepo
 
     @Test
     fun readData() {
 
         val electableCandidatesByPosition =
-            repo.findAllElectableByStateAndDistrict("CIUDAD DE MEXICO", "11-VENUSTIANO CARRANZA")
+            candidateRepo.findAllElectableByStateAndDistrict("CIUDAD DE MEXICO", "11-VENUSTIANO CARRANZA")
 
         println("electableCandidatesByPosition.size: " + electableCandidatesByPosition.size)
 
@@ -49,6 +42,17 @@ class DataMuncherApplicationTests {
         given().port(port)
             .get("/candidates/CIUDAD DE MEXICO/11-VENUSTIANO CARRANZA")
             .prettyPeek()
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testPlacesEndpoint(@LocalServerPort port: Int) {
+        given().port(port)
+            .get("/places")
+            .prettyPeek()
+            .then()
+            .statusCode(200)
     }
 
 
@@ -70,4 +74,3 @@ class ReadingTests {
     }
 
 }
-
