@@ -55,6 +55,6 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-springBoot {
-    mainClass.set("com.turuntururun.datamuncher.DataMuncherApplicationKt")
+tasks.withType<Jar> {
+    manifest.attributes["Main-Class"] = "com.turuntururun.datamuncher.DataMuncherApplicationKt"
 }
