@@ -43,6 +43,20 @@ class RestController(
         candidateRepo.saveAll(readXls(ClassPathResource("candidatos-ine.xls").inputStream)
             .map { CandidateDTO(it) })
 
+        candidateRepo.saveAll(
+            readXlsx(ClassPathResource("candidatos-yucatan.xlsx").inputStream)
+                .map {
+                    val candidateDTO = CandidateDTO(it)
+                    candidateDTO.state = "YUCATAN"
+                    candidateDTO.socials = listOf("facebook","Instagram", "Twitter", "Tiktok", "YouTube")
+                        .map { s-> it[s] }
+                        .filter { f-> f?.isNotEmpty()?:false }
+                        .joinToString(",")
+                    candidateDTO
+                }
+
+        )
+
         listOf(
             setOf(
                 "BAJA CALIFORNIA", "BAJA CALIFORNIA SUR", "CHIHUAHUA", "DURANGO",

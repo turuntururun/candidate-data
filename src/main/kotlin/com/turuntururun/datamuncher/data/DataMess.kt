@@ -30,13 +30,13 @@ data class CandidateDTO(
     @Column(length = 450) var socials: String?,
     var education: String?,
     var educationStatus: String?,
-    @Column(length = 5_000) var extraEducation: String?, // todo validate length
-    @Column(length = 5_000) var story: String?,
+    @Column(length = 3_000) var extraEducation: String?,
+    @Column(length = 5_300) var story: String?,
     @Column(length = 5_000) var politics: String?,
-    @Column(length = 2_500) var motivation: String?,
-    @Column(length = 1_600) var proposal1: String?,
-    @Column(length = 1_600) var proposal2: String?,
-    @Column(length = 1_600) var proposal3: String?,
+    @Column(length = 5_050) var motivation: String?,
+    @Column(length = 2_000) var proposal1: String?,
+    @Column(length = 2_000) var proposal2: String?,
+    @Column(length = 2_000) var proposal3: String?,
 ) {
     constructor(map: Map<String, String>) : this(
         party = map["PARTIDO_COALICION"]?.trim(),
@@ -82,7 +82,7 @@ interface CandidateRepo : JpaRepository<CandidateDTO, String> {
     @Query("""
         SELECT C FROM CandidateDTO C WHERE 
             (C.position = 'PRESIDENCIA DE LA REPÚBLICA') OR
-            (C.position = 'SENADURÍA FEDERAL MR' AND C.state = :state) OR 
+            (C.position IN ('SENADURÍA FEDERAL MR', 'GUBERNATURA','JEFATURA DE GOBIERNO') AND C.state = :state) OR 
             (C.position = 'DIPUTACIÓN FEDERAL MR' AND C.state = :state AND C.district = :district)
         ORDER BY C.party, C.type
         """)
