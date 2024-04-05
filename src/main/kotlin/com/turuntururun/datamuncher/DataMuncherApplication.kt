@@ -57,6 +57,11 @@ class RestController(
 
         )
 
+        candidateRepo.saveAll(
+            readCsv(ClassPathResource("manual-curation.csv").inputStream)
+                .map { CandidateDTO(it) }
+        )
+
         listOf(
             setOf(
                 "BAJA CALIFORNIA", "BAJA CALIFORNIA SUR", "CHIHUAHUA", "DURANGO",
@@ -83,6 +88,10 @@ class RestController(
         return candidateRepo.findAllElectableByStateAndDistrict(state, district)
             .groupBy { it.position }
     }
+
+    @Deprecated("Flawed implementation left provisionally", replaceWith = ReplaceWith("Git data from the build process"))
+    @GetMapping("/data-version")
+    fun getCandidates() = candidateRepo.count()
 
     @GetMapping("/places")
     fun getPlaces(): Map<String, List<String>> {

@@ -1,12 +1,10 @@
 package com.turuntururun.datamuncher
 
-import com.turuntururun.datamuncher.data.CandidateDTO
 import com.turuntururun.datamuncher.data.CandidateRepo
-import com.turuntururun.datamuncher.data.StateConstituency
 import com.turuntururun.datamuncher.data.StateConstituencyRepo
 import io.restassured.RestAssured.given
 import org.hamcrest.Matchers
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
@@ -14,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
 import org.springframework.boot.test.web.server.LocalServerPort
-import java.net.URL
+import java.io.FileInputStream
 
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -43,7 +41,6 @@ class DataMuncherApplicationTests {
     fun testApiForCDMX(@LocalServerPort port: Int) {
         given().port(port)
             .get("/candidates/CIUDAD DE MEXICO/11-VENUSTIANO CARRANZA")
-            .prettyPeek()
             .then()
             .statusCode(200)
 
@@ -62,7 +59,6 @@ class DataMuncherApplicationTests {
     fun testApiForYucatan(@LocalServerPort port: Int) {
         given().port(port)
             .get("/candidates/YUCATAN/4-MERIDA")
-            .prettyPeek()
             .then()
             .statusCode(200)
 
@@ -81,9 +77,29 @@ class DataMuncherApplicationTests {
     fun testPlacesEndpoint(@LocalServerPort port: Int) {
         given().port(port)
             .get("/places")
+            .then()
+            .statusCode(200)
+    }
+
+    @Test
+    fun testDataVersion(@LocalServerPort port: Int) {
+        given().port(port)
+            .get("/data-version")
             .prettyPeek()
             .then()
             .statusCode(200)
+    }
+
+    @Test
+    @Disabled("Git data not yet showing")
+    fun testInfoEndpoint(@LocalServerPort port: Int) {
+        given().port(port)
+            .get("/actuator/info")
+            .prettyPeek()
+            .then()
+            .statusCode(200)
+            .body(".", Matchers.notNullValue())
+            .body("git", Matchers.notNullValue())
     }
 
 
@@ -93,14 +109,12 @@ class ReadingTests {
     @ParameterizedTest
     @ValueSource(
         strings = [
-            "C:\\Users\\turun\\Downloads\\reporte_bd_identidad (1).xls",
-            "C:\\Users\\turun\\Downloads\\reporte_bd_curricular.xls",
-            "src/test/resources/candidatos-cdmx.xls",
+            "src/main/resources/manual-curation.csv",
         ]
     )
     fun readCsv(path: String) {
         println("Reading $path")
-        val data = readXlsx(path)
+        val data = readCsv(FileInputStream(path))
         println(data)
 
     }

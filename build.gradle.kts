@@ -3,8 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
+    id("com.gorylenko.gradle-git-properties") version "2.4.1"
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
+}
+
+springBoot {
+    buildInfo()
 }
 
 group = "com.turuntururun"
@@ -35,6 +40,7 @@ dependencies {
 
     implementation("org.apache.poi:poi:5.2.5")
     implementation("org.apache.poi:poi-ooxml:5.2.5")
+    implementation("com.opencsv:opencsv:3.7")
 
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")

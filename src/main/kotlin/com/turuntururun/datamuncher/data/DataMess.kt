@@ -47,7 +47,7 @@ data class CandidateDTO(
         ticketNumber = map["NUM_LISTA_O_FORMULA"]?.toDoubleOrNull()?.toInt(),
         name = map["NOMBRE_CANDIDATO"]?.trim(),
         type = map["TIPO_CANDIDATO"]?.trim(),
-        age = map["EDAD"]?.toDouble()?.toInt(),
+        age = map["EDAD"]?.toDoubleOrNull()?.toInt(),
         sex = map["SEXO"]?.trim(),
         address = map["DIRECCION_CASA_CAMPAÑA"]?.trim(),
         phone = map["TELEFONO"]?.trim(),

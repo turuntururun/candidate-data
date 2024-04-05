@@ -12,6 +12,27 @@ fun readXlsx(path: String): Collection<Map<String, String>> {
 
 }
 
+fun readCsv(inputStream: InputStream): Collection<Map<String, String>> {
+    val headers = mutableListOf<String>()
+    val builder = mutableListOf<Map<String, String>>()
+
+    val list = CSVReader(inputStream.reader())
+        .readAll()
+
+    list.forEach {rowValues ->
+
+        if (headers.isEmpty()) {
+            headers.addAll(rowValues)
+        } else {
+
+            val dataMap = headers.mapIndexed { index, s -> Pair(s, rowValues[index]) }
+                .associate { it }
+            builder.add(dataMap)
+        }
+    }
+    return builder
+}
+
 fun readXls(fileInputStream: InputStream): Collection<Map<String, String>> {
 
     val headers = mutableListOf<String>()
