@@ -17,6 +17,7 @@ data class CandidateDTO(
     var position: String?,
     var state: String?,
     var district: String?,
+    var regionalDistrict: String?,
     var constituency: Int?,
     var ticketNumber: Int?,
     var name: String?,
@@ -31,18 +32,19 @@ data class CandidateDTO(
     var education: String?,
     var educationStatus: String?,
     @Column(length = 3_000) var extraEducation: String?,
-    @Column(length = 5_300) var story: String?,
-    @Column(length = 5_000) var politics: String?,
-    @Column(length = 5_050) var motivation: String?,
+    @Column(length = 6_000) var story: String?,
+    @Column(length = 5_700) var politics: String?,
+    @Column(length = 6_000) var motivation: String?,
     @Column(length = 2_000) var proposal1: String?,
     @Column(length = 2_000) var proposal2: String?,
     @Column(length = 2_000) var proposal3: String?,
 ) {
     constructor(map: Map<String, String>) : this(
-        party = map["PARTIDO_COALICION"]?.trim(),
-        position = map["CARGO"]?.trim(),
+        party = map["PARTIDO_COALICION"]?.trim()?.uppercase(),
+        position = map["CARGO"]?.trim()?.uppercase(),
         state = map["ENTIDAD"]?.trim(),
-        district = map["DISTRITO FEDERAL"]?.trim(),
+        district = map["DISTRITO FEDERAL"]?.uppercase(),
+        regionalDistrict = map["DISTRITO LOCAL"]?.uppercase(),
         constituency = map["CIRCUNSCRIPCION"]?.toIntOrNull(),
         ticketNumber = map["NUM_LISTA_O_FORMULA"]?.toDoubleOrNull()?.toInt(),
         name = map["NOMBRE_CANDIDATO"]?.trim(),
@@ -83,7 +85,8 @@ interface CandidateRepo : JpaRepository<CandidateDTO, String> {
         SELECT C FROM CandidateDTO C WHERE 
             (C.position = 'PRESIDENCIA DE LA REPÚBLICA') OR
             (C.position IN ('SENADURÍA FEDERAL MR', 'GUBERNATURA','JEFATURA DE GOBIERNO') AND C.state = :state) OR 
-            (C.position = 'DIPUTACIÓN FEDERAL MR' AND C.state = :state AND C.district = :district)
+            (C.position = 'DIPUTACIÓN FEDERAL MR' AND C.state = :state AND C.district = :district) OR 
+            (C.position IN ('TITULAR DE ALCALDÍA', 'CONCEJALÍA DE MAYORÍA RELATIVA', 'DIPUTACIÓN','AYUNTAMIENTO') AND :district like CONCAT( '%',C.regionalDistrict,'%'))
         ORDER BY C.party, C.type
         """)
     fun findAllElectableByStateAndDistrict(state: String?, district: String?): List<CandidateDTO>

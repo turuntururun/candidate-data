@@ -76,9 +76,8 @@ fun readXlsx(fileInputStream: InputStream): Collection<Map<String, String>> {
     while (iterator.hasNext()) {
         val row = iterator.next()
 
-        val cellValues = row.iterator().toList { it.toString() }
-
         if (headers.isEmpty()) {
+            val cellValues = row.iterator().toList { it.toString() }
             headers.addAll(cellValues)
         } else {
             val dataMap = headers.mapIndexed { index, s ->
@@ -89,7 +88,7 @@ fun readXlsx(fileInputStream: InputStream): Collection<Map<String, String>> {
                         CellType.NUMERIC -> Pair(s, cell.numericCellValue.toString())
                         CellType.STRING -> Pair(s, cell.stringCellValue)
                         CellType.FORMULA -> TODO()
-                        CellType.BLANK -> TODO()
+                        CellType.BLANK -> Pair(s, "")
                         CellType.BOOLEAN -> TODO()
                         CellType.ERROR -> TODO()
                         null -> Pair(s, "")

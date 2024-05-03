@@ -52,6 +52,8 @@ class DataMuncherApplicationTests {
             .body("'JEFATURA DE GOBIERNO'", Matchers.notNullValue())
             .body("'SENADURÍA FEDERAL MR'", Matchers.notNullValue())
             .body("'DIPUTACIÓN FEDERAL MR'", Matchers.notNullValue())
+            .body("'TITULAR DE ALCALDÍA'", Matchers.notNullValue())
+            .body("'CONCEJALÍA DE MAYORÍA RELATIVA'", Matchers.notNullValue())
 
     }
 
@@ -100,6 +102,7 @@ class DataMuncherApplicationTests {
             .statusCode(200)
             .body(".", Matchers.notNullValue())
             .body("git", Matchers.notNullValue())
+            .body("usage", Matchers.notNullValue())
     }
 
 
