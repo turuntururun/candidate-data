@@ -86,7 +86,7 @@ interface CandidateRepo : JpaRepository<CandidateDTO, String> {
             (C.position = 'PRESIDENCIA DE LA REPÚBLICA') OR
             (C.position IN ('SENADURÍA FEDERAL MR', 'GUBERNATURA','JEFATURA DE GOBIERNO') AND C.state = :state) OR 
             (C.position = 'DIPUTACIÓN FEDERAL MR' AND C.state = :state AND C.district = :district) OR 
-            (C.position IN ('TITULAR DE ALCALDÍA', 'CONCEJALÍA DE MAYORÍA RELATIVA', 'DIPUTACIÓN','AYUNTAMIENTO') AND :district like CONCAT( '%',C.regionalDistrict,'%'))
+            (C.position IN ('TITULAR DE ALCALDÍA', 'CONCEJALÍA DE MAYORÍA RELATIVA', 'DIPUTACIÓN','AYUNTAMIENTO') AND C.state = :state AND :district like CONCAT( '%',C.regionalDistrict,'%'))
         ORDER BY C.party, C.type
         """)
     fun findAllElectableByStateAndDistrict(state: String?, district: String?): List<CandidateDTO>
